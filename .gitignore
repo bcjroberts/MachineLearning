@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Don't allow the collision database to be uploaded
+.csv
+
 # User-specific files
 *.suo
 *.user
