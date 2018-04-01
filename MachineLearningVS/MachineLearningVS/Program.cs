@@ -21,8 +21,6 @@ namespace C4._5Test {
 		public int dataAmount = 0;
 		public double readTime = 0;
 		public double codeTime = 0;
-		public double treeCreationTime = 0;
-		public double learningCreationTime = 0;
 		public double treeLearningTime = 0;
 		public double ruleFetchTime = 0;
 		public DataHolder (int ndataAmount) {
@@ -33,8 +31,6 @@ namespace C4._5Test {
 			string result = "Amount of Data: " + dataAmount + "\n";
 			result += "Time to read data: " + readTime + "\n";
 			result += "Time to Codify the data: " + codeTime + "\n";
-			result += "Time to Create Decision Tree: " + treeCreationTime + "\n";
-			result += "Time to Create C4.5: " + learningCreationTime + "\n";
 			result += "Time to Learn the Tree: " + treeLearningTime + "\n";
 			result += "Time to Fetch Rules: " + ruleFetchTime + "\n";
 			result += "Total Time: " + getTotalTime();
@@ -42,7 +38,7 @@ namespace C4._5Test {
 		}
 
 		public double getTotalTime () {
-			return readTime + codeTime + treeCreationTime + learningCreationTime + treeLearningTime + ruleFetchTime;
+			return readTime + codeTime + treeLearningTime + ruleFetchTime;
 		}
 	}
 
@@ -99,7 +95,6 @@ namespace C4._5Test {
 				dt.codeTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
 				previousTime = DateTime.Now;
 
-				Console.WriteLine("Creating decision tree...");
 				DecisionVariable[] attributes =
 				{
 					new DecisionVariable("C_MNTH", 14),
@@ -126,15 +121,8 @@ namespace C4._5Test {
 				int classCount = 6; // 2 possible output values for playing tennis: yes or no
 				DecisionTree tree = new DecisionTree(attributes, classCount);
 
-				dt.treeCreationTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
-				previousTime = DateTime.Now;
-
-				Console.WriteLine("Creating learning tree...");
 				// Create a new instance of the ID3 algorithm
 				C45Learning c45learnig = new C45Learning(tree);
-
-				dt.learningCreationTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
-				previousTime = DateTime.Now;
 
 				// Translate our training data into integer symbols using our codebook:
 				DataTable symbols = codebook.Apply(data);
