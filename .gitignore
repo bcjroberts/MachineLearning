@@ -6,6 +6,9 @@
 # Don't allow the collision database to be uploaded
 *.csv
 
+# Don't push the auto generated txt files
+*0.txt
+
 # User-specific files
 *.suo
 *.user
