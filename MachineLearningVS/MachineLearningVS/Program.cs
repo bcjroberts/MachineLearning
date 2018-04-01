@@ -23,6 +23,7 @@ namespace C4._5Test {
 		public double codeTime = 0;
 		public double treeLearningTime = 0;
 		public double ruleFetchTime = 0;
+		public int totalRules = 0;
 		public DataHolder (int ndataAmount) {
 			dataAmount = ndataAmount;
 		}
@@ -58,8 +59,8 @@ namespace C4._5Test {
 
 			while (dataIndex < amountOfDataToRead.Length) {
 				previousTime = DateTime.Now;
-				DataHolder dt = new DataHolder(amountOfDataToRead[dataIndex]);
-				dataHolders.Add(dt);
+				DataHolder dataHolder = new DataHolder(amountOfDataToRead[dataIndex]);
+				dataHolders.Add(dataHolder);
 
 				int amountOfDataRead = -1;
 				StreamReader reader = File.OpenText("../../../../ncdb_2015.csv");
@@ -86,13 +87,13 @@ namespace C4._5Test {
 				}
 				reader.Close();
 
-				dt.readTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
+				dataHolder.readTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
 				previousTime = DateTime.Now;
 				Console.WriteLine("Finished reading " + amountOfDataToRead[dataIndex] + " data, codifying...");
 				
 				Codification codebook = new Codification(data);
 
-				dt.codeTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
+				dataHolder.codeTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
 				previousTime = DateTime.Now;
 
 				DecisionVariable[] attributes =
@@ -133,19 +134,27 @@ namespace C4._5Test {
 				// Learn the training instances!
 				c45learnig.Learn(inputs, outputs);
 
-				dt.treeLearningTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
+				dataHolder.treeLearningTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
 				previousTime = DateTime.Now;
 
 				Console.WriteLine("Getting rules from tree...");
 				DecisionSet ds = tree.ToRules();
 
-				dt.ruleFetchTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
-				string rules = dt.ToString() + "\n" + " Rules: " + ds.Count + "\n" + ds.ToString();
+				dataHolder.ruleFetchTime = DateTime.Now.Subtract(previousTime).TotalSeconds;
+				dataHolder.totalRules = ds.Count;
+				string rules = dataHolder.ToString() + "\n" + " Rules: " + dataHolder.totalRules + "\n" + ds.ToString();
 
 				System.IO.File.WriteAllText("../../../../rules" + amountOfDataToRead[dataIndex] + ".txt", rules);
-				Console.WriteLine(amountOfDataToRead[dataIndex] + " generated " + ds.Count + " rules\n" + dt.ToString());
+				Console.WriteLine(amountOfDataToRead[dataIndex] + " generated " + dataHolder.totalRules + " rules\n" + dataHolder.ToString());
 				dataIndex++;
 			}
+
+			// Print out a csv with the time and rule data
+			string csvData = "Data_Amount,Read_Time,Codify_Time,Learn_Time,Fetch_Rule_Time,Total_Time,Total_Rules\n";
+			foreach (DataHolder dh in dataHolders) {
+				csvData +=  dh.dataAmount + ","+ dh.readTime + "," + dh.codeTime + "," + dh.treeLearningTime + "," + dh.ruleFetchTime + "," + dh.getTotalTime() + "," + dh.totalRules + "\n";
+			}
+			System.IO.File.WriteAllText("../../../../AllData.csv", csvData);
 		}
 	}
 }

@@ -5,6 +5,7 @@
 
 # Don't allow the collision database to be uploaded
 *.csv
+*.xlsm
 
 # Don't push the auto generated txt files
 *0.txt
